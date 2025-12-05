@@ -1,0 +1,14 @@
+name: CI
+
+# When to run
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Lunestay CI is alive! Ready for real tests soon."
