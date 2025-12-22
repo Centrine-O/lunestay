@@ -75,4 +75,19 @@ Connects listings to their amenities (many-to-many).
 | PRIMARY KEY (listing_id, amenity_id)                               | Composite primary key (no duplicates) |
 
 
+## 5. listing_photos table
+
+Stores multiple photos per listing. Images are uploaded to MinIO (S3), we only store the URL and metadata.
+
+| Column          | Type                  | Constraints                                      | Description |
+|-----------------|-----------------------|--------------------------------------------------|-------------|
+| id              | BIGSERIAL             | PRIMARY KEY                                      | Auto-increment ID |
+| listing_id      | BIGINT                | NOT NULL, REFERENCES listings(id) ON DELETE CASCADE | Which listing this photo belongs to |
+| url             | TEXT                  | NOT NULL                                         | Full URL in MinIO, e.g., https://localhost:9000/lunestay/123/photo1.jpg |
+| key             | TEXT                  | NOT NULL                                         | Object key in MinIO bucket, e.g., listings/123/photo1.jpg |
+| caption         | TEXT                  |                                                  | Optional host-provided caption |
+| sort_order      | SMALLINT              | NOT NULL DEFAULT 0                               | Order photos are displayed (0 = first/primary) |
+| is_cover        | BOOLEAN               | NOT NULL DEFAULT false                           | True for the main cover photo (we can enforce only one per listing later) |
+| created_at      | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
+
 
