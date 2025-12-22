@@ -91,3 +91,35 @@ Stores multiple photos per listing. Images are uploaded to MinIO (S3), we only s
 | created_at      | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
 
 
+## 6. blocked_dates table
+
+Dates the host manually blocks (e.g., personal use, cleaning, maintenance). No bookings allowed on these dates.
+
+| Column          | Type                  | Constraints                                      | Description |
+|-----------------|-----------------------|--------------------------------------------------|-------------|
+| id              | BIGSERIAL             | PRIMARY KEY                                      | |
+| listing_id      | BIGINT                | NOT NULL, REFERENCES listings(id) ON DELETE CASCADE | |
+| date            | DATE                  | NOT NULL                                         | The blocked date (midnight UTC) |
+| reason          | TEXT                  |                                                  | Optional note, e.g., "Personal stay" |
+| created_at      | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
+| UNIQUE (listing_id, date)                                                  | Prevent duplicate blocks on same day |
+
+## 7. bookings table
+
+Actual reservations made by guests. This is where money and trust flow.
+
+| Column               | Type                  | Constraints                                      | Description |
+|----------------------|-----------------------|--------------------------------------------------|-------------|
+| id                   | BIGSERIAL             | PRIMARY KEY                                      | |
+| listing_id           | BIGINT                | NOT NULL, REFERENCES listings(id) ON DELETE CASCADE | |
+| guest_id             | BIGINT                | NOT NULL, REFERENCES users(id)                   | The booking guest |
+| check_in_date        | DATE                  | NOT NULL                                         | First night |
+| check_out_date       | DATE                  | NOT NULL                                         | Day they leave (not inclusive) |
+| num_guests           | SMALLINT              | NOT NULL CHECK (num_guests > 0)                  | |
+| total_price          | NUMERIC(10,2)         | NOT NULL CHECK (total_price >= 0)                | Final amount charged (includes fees) |
+| currency             | VARCHAR(3)            | NOT NULL DEFAULT 'USD'                           | e.g., USD, EUR |
+| status               | VARCHAR(20)           | NOT NULL DEFAULT 'pending'                       | pending, confirmed, cancelled, completed |
+| created_at           | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
+| updated_at           | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
+| CHECK (check_out_date > check_in_date)                                     | Prevent invalid date ranges |
+
