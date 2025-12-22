@@ -123,3 +123,4 @@ Actual reservations made by guests. This is where money and trust flow.
 | updated_at           | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
 | CHECK (check_out_date > check_in_date)                                     | Prevent invalid date ranges |
 
+
