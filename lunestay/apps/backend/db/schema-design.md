@@ -75,3 +75,4 @@ Connects listings to their amenities (many-to-many).
 | PRIMARY KEY (listing_id, amenity_id)                               | Composite primary key (no duplicates) |
 
 
+
