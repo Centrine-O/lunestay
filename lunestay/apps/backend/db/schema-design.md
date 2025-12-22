@@ -194,3 +194,4 @@ Individual messages in a conversation.
 | content              | TEXT                  | NOT NULL                                         | Message text |
 | read_at              | TIMESTAMPTZ           |                                                  | When recipient read it (null = unread) |
 | created_at           | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
+
