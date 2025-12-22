@@ -124,3 +124,45 @@ Actual reservations made by guests. This is where money and trust flow.
 | CHECK (check_out_date > check_in_date)                                     | Prevent invalid date ranges |
 
 
+## 8. listing_reviews table
+
+Reviews written by guests about the listing and host experience.
+
+| Column               | Type                  | Constraints                                      | Description |
+|----------------------|-----------------------|--------------------------------------------------|-------------|
+| id                   | BIGSERIAL             | PRIMARY KEY                                      | |
+| listing_id           | BIGINT                | NOT NULL, REFERENCES listings(id) ON DELETE CASCADE | |
+| booking_id           | BIGINT                | NOT NULL, REFERENCES bookings(id) ON DELETE CASCADE | Links to the stay |
+| guest_id             | BIGINT                | NOT NULL, REFERENCES users(id)                   | Reviewer (guest) |
+| host_id              | BIGINT                | NOT NULL, REFERENCES users(id)                   | Reviewed host |
+| rating_overall       | SMALLINT              | NOT NULL CHECK (rating_overall BETWEEN 1 AND 5)   | 1-5 stars |
+| rating_cleanliness   | SMALLINT              | NOT NULL CHECK (rating_cleanliness BETWEEN 1 AND 5) | |
+| rating_communication | SMALLINT              | NOT NULL CHECK (rating_communication BETWEEN 1 AND 5) | |
+| rating_checkin       | SMALLINT              | NOT NULL CHECK (rating_checkin BETWEEN 1 AND 5)       | |
+| rating_location      | SMALLINT              | NOT NULL CHECK (rating_location BETWEEN 1 AND 5)      | |
+| rating_value         | SMALLINT              | NOT NULL CHECK (rating_value BETWEEN 1 AND 5)         | |
+| comment              | TEXT                  | NOT NULL                                         | Public review text |
+| response_from_host   | TEXT                  |                                                  | Optional host response |
+| created_at           | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
+| UNIQUE (booking_id)                                                        | One review per stay |
+
+
+## 9. host_reviews table
+
+Reviews written by hosts about their guests.
+
+| Column               | Type                  | Constraints                                      | Description |
+|----------------------|-----------------------|--------------------------------------------------|-------------|
+| id                   | BIGSERIAL             | PRIMARY KEY                                      | |
+| booking_id           | BIGINT                | NOT NULL, REFERENCES bookings(id) ON DELETE CASCADE | Links to the stay |
+| host_id              | BIGINT                | NOT NULL, REFERENCES users(id)                   | Reviewer (host) |
+| guest_id             | BIGINT                | NOT NULL, REFERENCES users(id)                   | Reviewed guest |
+| rating_overall       | SMALLINT              | NOT NULL CHECK (rating_overall BETWEEN 1 AND 5)   | 1-5 stars |
+| rating_communication | SMALLINT              | NOT NULL CHECK (rating_communication BETWEEN 1 AND 5) | |
+| rating_cleanliness   | SMALLINT              | NOT NULL CHECK (rating_cleanliness BETWEEN 1 AND 5)   | |
+| rating_house_rules   | SMALLINT              | NOT NULL CHECK (rating_house_rules BETWEEN 1 AND 5)   | Followed rules? |
+| comment              | TEXT                  | NOT NULL                                         | Public review text |
+| is_recommended       | BOOLEAN               | NOT NULL                                         | Would host welcome guest again? |
+| created_at           | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
+| UNIQUE (booking_id)                                                        | One review per stay |
+
