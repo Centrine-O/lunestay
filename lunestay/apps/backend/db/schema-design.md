@@ -166,3 +166,31 @@ Reviews written by hosts about their guests.
 | created_at           | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
 | UNIQUE (booking_id)                                                        | One review per stay |
 
+
+## 10. conversations table
+
+A conversation thread between a host and a guest about a specific listing.
+
+| Column               | Type                  | Constraints                                      | Description |
+|----------------------|-----------------------|--------------------------------------------------|-------------|
+| id                   | BIGSERIAL             | PRIMARY KEY                                      | |
+| listing_id           | BIGINT                | NOT NULL, REFERENCES listings(id) ON DELETE CASCADE | The listing being discussed |
+| host_id              | BIGINT                | NOT NULL, REFERENCES users(id)                   | Host in the conversation |
+| guest_id             | BIGINT                | NOT NULL, REFERENCES users(id)                   | Guest in the conversation |
+| last_message_at      | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | For sorting inbox by most recent |
+| created_at           | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
+| UNIQUE (listing_id, host_id, guest_id)                                     | One thread per listing/guest/host pair |
+
+
+## 11. messages table
+
+Individual messages in a conversation.
+
+| Column               | Type                  | Constraints                                      | Description |
+|----------------------|-----------------------|--------------------------------------------------|-------------|
+| id                   | BIGSERIAL             | PRIMARY KEY                                      | |
+| conversation_id      | BIGINT                | NOT NULL, REFERENCES conversations(id) ON DELETE CASCADE | |
+| sender_id            | BIGINT                | NOT NULL, REFERENCES users(id)                   | Who sent it (host or guest) |
+| content              | TEXT                  | NOT NULL                                         | Message text |
+| read_at              | TIMESTAMPTZ           |                                                  | When recipient read it (null = unread) |
+| created_at           | TIMESTAMPTZ           | NOT NULL DEFAULT NOW()                           | |
